@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker { 
             image 'python:3.11' 
-            args '-p 5556:5556'
+            args '-e HOME=/tmp -e PIP_CACHE_DIR=/tmp'
         }
     }
     environment {
@@ -23,19 +23,22 @@ pipeline {
             }
         }
         stage('Build') {
-            steps {
-                sh '''
-                    python -m pip install --upgrade pip --user
-                    pip install flask
-                    pip install requests
-                    pip install pytest
-                    if [ ! -f count.txt ]; then
-                        echo "0" > count.txt
-                    fi
-                    chmod 666 count.txt
-                '''
-            }
-        }
+    steps {
+        sh '''
+            export HOME=/tmp
+            export PIP_CACHE_DIR=/tmp
+
+            python -m pip install --upgrade pip
+            pip install flask requests pytest
+
+            if [ ! -f count.txt ]; then
+                echo "0" > count.txt
+            fi
+
+            chmod 666 count.txt
+        '''
+    }
+}
         stage('Test') {
             steps {
                 sh '''

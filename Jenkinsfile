@@ -25,7 +25,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh '''
-                    python -m pip install --upgrade pip
+                    python -m pip install --upgrade pip --user
                     pip install flask
                     pip install requests
                     pip install pytest
